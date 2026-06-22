@@ -45,8 +45,8 @@ services:
         NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL:-http://localhost:3000}
     container_name: adelcrm-app
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:${APP_PORT:-3000}:3000"
+    expose:
+      - "3000"
     environment:
       NODE_ENV: production
       DATABASE_URL: postgresql://${POSTGRES_USER:-adelcrm}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-adelcrm}
@@ -60,8 +60,18 @@ services:
         condition: service_completed_successfully
     networks:
       - adelcrm-network
+      - traefik
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=${TRAEFIK_NETWORK:-traefik}
+      - traefik.http.routers.adelcrm.rule=Host(`${APP_DOMAIN:-crm.adelbr.tech}`)
+      - traefik.http.routers.adelcrm.entrypoints=${TRAEFIK_ENTRYPOINT:-websecure}
+      - traefik.http.routers.adelcrm.tls=true
+      - traefik.http.routers.adelcrm.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-letsencrypt}
+      - traefik.http.services.adelcrm.loadbalancer.server.port=3000
 
   caddy:
+    profiles: ["with-caddy"]
     image: caddy:2-alpine
     container_name: adelcrm-caddy
     restart: unless-stopped
@@ -81,6 +91,9 @@ services:
 networks:
   adelcrm-network:
     driver: bridge
+  traefik:
+    external: true
+    name: ${TRAEFIK_NETWORK:-traefik}
 
 volumes:
   postgres_data:
