@@ -25,8 +25,9 @@ FROM base AS migrator
 RUN apk add --no-cache postgresql-client
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json package-lock.json drizzle.config.ts ./
+COPY drizzle ./drizzle
 COPY src ./src
-COPY scripts/docker-migrate.sh ./scripts/docker-migrate.sh
+COPY scripts/docker-migrate.sh scripts/docker-migrate.mjs ./scripts/
 RUN chmod +x ./scripts/docker-migrate.sh
 CMD ["./scripts/docker-migrate.sh"]
 
