@@ -22,10 +22,13 @@ RUN npm run build
 
 # --- Migrations (drizzle-kit push) ---
 FROM base AS migrator
+RUN apk add --no-cache postgresql-client
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json package-lock.json drizzle.config.ts ./
 COPY src ./src
-CMD ["npx", "drizzle-kit", "push"]
+COPY scripts/docker-migrate.sh ./scripts/docker-migrate.sh
+RUN chmod +x ./scripts/docker-migrate.sh
+CMD ["./scripts/docker-migrate.sh"]
 
 # --- Produção ---
 FROM node:20-alpine AS runner
