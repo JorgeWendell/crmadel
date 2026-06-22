@@ -1,0 +1,3 @@
+crm.adelbr.tech {
+	reverse_proxy app:3000
+}

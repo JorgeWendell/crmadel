@@ -35,6 +35,6 @@ export const auth = betterAuth({
     process.env.BETTER_AUTH_URL ||
     process.env.NEXT_PUBLIC_BASE_URL ||
     (process.env.NODE_ENV === "production"
-      ? "https://sispet.adelbr.tech"
+      ? "https://crm.adelbr.tech"
       : "http://localhost:3000"),
 });
