@@ -63,11 +63,10 @@ services:
       - traefik
     labels:
       - traefik.enable=true
-      - traefik.docker.network=${TRAEFIK_NETWORK:-traefik}
+      - traefik.docker.network=${TRAEFIK_NETWORK:-proxy}
       - traefik.http.routers.adelcrm.rule=Host(`${APP_DOMAIN:-crm.adelbr.tech}`)
-      - traefik.http.routers.adelcrm.entrypoints=${TRAEFIK_ENTRYPOINT:-websecure}
-      - traefik.http.routers.adelcrm.tls=true
-      - traefik.http.routers.adelcrm.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-letsencrypt}
+      - traefik.http.routers.adelcrm.entrypoints=websecure
+      - traefik.http.routers.adelcrm.tls.certresolver=letsencrypt
       - traefik.http.services.adelcrm.loadbalancer.server.port=3000
 
   caddy:
@@ -93,7 +92,7 @@ networks:
     driver: bridge
   traefik:
     external: true
-    name: ${TRAEFIK_NETWORK:-traefik}
+    name: ${TRAEFIK_NETWORK:-proxy}
 
 volumes:
   postgres_data:
